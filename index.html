@@ -37,44 +37,5 @@
     <button type="submit">Submit</button>
     <div class="status" id="status"></div>
   </form>
-
-  <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzylJsJ4MPx4QGbvebDg2lW56gFetivBw-MRaUV2wb53Zp9CrkyboPZq31HmQ0HpvQ-Zg/exec";
-
-    const form = document.getElementById("intakeForm");
-    const statusEl = document.getElementById("status");
-
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      statusEl.textContent = "Submitting...";
-
-      const payload = {
-        name: form.name.value,
-        platform: form.platform.value,
-        location: form.location.value,
-        into: form.into.value,
-        notes: form.notes.value,
-      };
-
-      try {
-        const res = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-
-        const data = await res.json().catch(() => ({}));
-
-        if (data.ok) {
-          statusEl.textContent = "Saved to Google Sheets.";
-          form.reset();
-        } else {
-          statusEl.textContent = "Error: " + (data.error || "Unknown error");
-        }
-      } catch (err) {
-        statusEl.textContent = "Request failed: " + err;
-      }
-    });
-  </script>
 </body>
 </html>
