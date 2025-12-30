@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Data Intake</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 24px; max-width: 720px; }
+    label { display:block; margin-top: 12px; font-weight: 600; }
+    input, textarea {
+      width: 100%; padding: 10px; margin-top: 6px; box-sizing: border-box;
+      border: 1px solid #ccc; border-radius: 6px;
+    }
+    button { margin-top: 16px; padding: 10px 14px; border: 0; border-radius: 6px; cursor: pointer; }
+    .status { margin-top: 12px; }
+  </style>
+</head>
+<body>
+  <h1>Enter Details</h1>
+
+  <form id="intakeForm">
+    <label for="name">Name (required)</label>
+    <input id="name" name="name" required />
+
+    <label for="platform">Platform</label>
+    <input id="platform" name="platform" placeholder="e.g., LinkedIn, Discord, Email" />
+
+    <label for="location">Location</label>
+    <input id="location" name="location" placeholder="e.g., Burlington, VT" />
+
+    <label for="into">Into</label>
+    <input id="into" name="into" placeholder="e.g., SD-WAN, hiking, AI" />
+
+    <label for="notes">Notes</label>
+    <textarea id="notes" name="notes" rows="5"></textarea>
+
+    <button type="submit">Submit</button>
+    <div class="status" id="status"></div>
+  </form>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbzylJsJ4MPx4QGbvebDg2lW56gFetivBw-MRaUV2wb53Zp9CrkyboPZq31HmQ0HpvQ-Zg/exec";
+
+    const form = document.getElementById("intakeForm");
+    const statusEl = document.getElementById("status");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      statusEl.textContent = "Submitting...";
+
+      const payload = {
+        name: form.name.value,
+        platform: form.platform.value,
+        location: form.location.value,
+        into: form.into.value,
+        notes: form.notes.value,
+      };
+
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json().catch(() => ({}));
+
+        if (data.ok) {
+          statusEl.textContent = "Saved to Google Sheets.";
+          form.reset();
+        } else {
+          statusEl.textContent = "Error: " + (data.error || "Unknown error");
+        }
+      } catch (err) {
+        statusEl.textContent = "Request failed: " + err;
+      }
+    });
+  </script>
+</body>
+</html>
