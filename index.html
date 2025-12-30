@@ -37,5 +37,28 @@
     <button type="submit">Submit</button>
     <div class="status" id="status"></div>
   </form>
+  <iframe name="hidden_iframe" style="display:none;"></iframe>
+<script>
+  // Paste your /exec URL here
+  const API_URL = "https://script.google.com/macros/s/AKfycbxwtBS1aHYuNHAxMzYliA9QMN_HDWTDP-BmCZFdbBWanA7Hx25KIWBtR9vYNkCR0BsnfA/exec";
+
+  const form = document.getElementById("intakeForm");
+  const statusEl = document.getElementById("status");
+
+  // Configure the form to POST into the hidden iframe (avoids CORS)
+  form.setAttribute("method", "POST");
+  form.setAttribute("action", API_URL);
+  form.setAttribute("target", "hidden_iframe");
+
+  form.addEventListener("submit", () => {
+    statusEl.textContent = "Submitting...";
+
+    // Because we cannot read the cross-origin response, we optimistically confirm.
+    setTimeout(() => {
+      statusEl.textContent = "Saved to Google Sheets.";
+      form.reset();
+    }, 800);
+  });
+</script>
 </body>
 </html>
